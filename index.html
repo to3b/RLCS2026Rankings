@@ -4,382 +4,345 @@
 <meta charset="utf-8" />
 <title>Seed Tracker</title>
 
-<!-- Inter font for clean UI -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
---bg:#08090c;
---card:#0b0c12;
---muted:#aab2c5; /* brighter muted text */
---muted-2:#9aa3b8;
---text:#d8d8d8;
---accent:#00d4ff;
---accent-strong:#00b7ff;
---panel-border: rgba(255,255,255,0.06);
---mono: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg:#08090c;
+  --card:#0b0c12;
+  --muted:#aab2c5;
+  --muted-2:#9aa3b8;
+  --text:#d8d8d8;
+  --accent:#00d4ff;
+  --panel-border: rgba(255,255,255,0.06);
+  --mono:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
-
 html,body{
-height:100%;
-margin:0;
-background:var(--bg);
-color:var(--text);
-font-family: var(--mono);
--webkit-font-smoothing:antialiased;
--moz-osx-font-smoothing:grayscale;
+  height:100%;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--mono);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
-
 #root{
-padding:20px 22px 40px;
-max-width:1200px;
-margin:0 auto;
-box-sizing:border-box;
+  padding:20px 22px 40px;
+  max-width:1200px;
+  margin:0 auto;
+  box-sizing:border-box;
 }
-
-/* CLEAN HEADER */
 .header{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-padding:14px 18px;
-border-bottom:1px solid var(--panel-border);
-margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--panel-border);
+  margin-bottom:18px;
 }
-
 .title{
-font-size:18px;
-font-weight:600;
-color:var(--text);
-margin:0;
-letter-spacing:0.2px;
+  font-size:18px;
+  font-weight:600;
+  color:var(--text);
+  margin:0;
+  letter-spacing:0.2px;
 }
-
 .subtitle{
-font-size:12px;
-color:var(--muted);
-margin:0;
+  font-size:12px;
+  color:var(--muted);
+  margin:0;
 }
-
-/* CARD / TABLE WRAPPER */
 .card{
-background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-border:1px solid var(--panel-border);
-border-radius:10px;
-padding:18px;
-box-sizing:border-box;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid var(--panel-border);
+  border-radius:10px;
+  padding:18px;
+  box-sizing:border-box;
 }
-
-/* FILTERS ROW */
 .controls{
-display:flex;
-gap:10px;
-align-items:center;
-flex-wrap:wrap;
-margin-bottom:14px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:14px;
 }
-
 .btn{
-background:transparent;
-border:1px solid rgba(255,255,255,0.08);
-color:var(--muted-2);
-padding:7px 12px;
-border-radius:6px;
-font-size:12px;
-cursor:pointer;
-font-weight:600;
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--muted-2);
+  padding:7px 12px;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+  font-weight:600;
 }
-
 .btn.active{
-background:rgba(0,212,255,0.06);
-border-color: rgba(0,212,255,0.28);
-color:var(--accent);
+  background:rgba(0,212,255,0.06);
+  border-color:rgba(0,212,255,0.28);
+  color:var(--accent);
 }
-
-/* TABLE STYLING - keep layout same but more readable */
 table{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
-font-size:13px;
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  font-size:13px;
 }
-
 thead th{
-text-align:left;
-padding:12px 10px;
-font-size:12px;
-font-weight:700;
-color:var(--muted-2);
-text-transform:uppercase;
-letter-spacing:1px;
-border-bottom:1px solid var(--panel-border);
+  text-align:left;
+  padding:12px 10px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted-2);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  border-bottom:1px solid var(--panel-border);
 }
-
 tbody td{
-padding:12px 10px;
-vertical-align:middle;
-color:var(--text);
-border-bottom:1px solid rgba(255,255,255,0.03);
+  padding:12px 10px;
+  vertical-align:middle;
+  color:var(--text);
+  border-bottom:1px solid rgba(255,255,255,0.03);
 }
-
 .seed-pill{
-display:inline-flex;
-align-items:center;
-gap:8px;
-padding:6px 10px;
-border-radius:6px;
-font-weight:700;
-font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:6px;
+  font-weight:700;
+  font-size:13px;
 }
-
 .region{
-font-size:13px;
-color:var(--muted);
-font-weight:600;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:600;
 }
-
 .small-muted{
-font-size:11px;
-color:var(--muted);
+  font-size:11px;
+  color:var(--muted);
 }
-
 .wcell{
-text-align:right;
-font-family:var(--mono);
-font-weight:700;
+  text-align:right;
+  font-family:var(--mono);
+  font-weight:700;
 }
-
 .gd{
-font-weight:700;
-color:var(--muted-2);
+  font-weight:700;
+  color:var(--muted-2);
 }
-
 .expand-toggle{
-text-align:center;
-color:var(--muted);
-cursor:pointer;
-transition:transform 0.15s ease;
+  text-align:center;
+  color:var(--muted);
+  cursor:pointer;
+  transition:transform 0.15s ease;
 }
-
-/* Responsive tweaks */
 @media (max-width:900px){
-#root{ padding:14px; }
-.title{ font-size:16px; }
-thead th{ font-size:11px; }
-tbody td{ font-size:12px; }
+  #root{ padding:14px; }
+  .title{ font-size:16px; }
+  thead th{ font-size:11px; }
+  tbody td{ font-size:12px; }
 }
 </style>
 </head>
 
 <body>
 <div id="root">
-<!-- Clean header: small title and subtitle (replaces large header block in original) -->
 <div class="header">
-<div>
-<h1 class="title">Seed Tracker</h1>
-<div class="subtitle">Live leaderboard — connect your published Google Sheet CSV</div>
-</div>
-<div class="small-muted">Connected to Google Sheets — set your CSV URL below</div>
+  <div>
+    <h1 class="title">Seed Tracker</h1>
+    <div class="subtitle">Live leaderboard — connect your published Google Sheet CSV</div>
+  </div>
+  <div class="small-muted">Connected to Google Sheets — set your CSV URL below</div>
 </div>
 
 <div class="card" id="app-root">
-<!-- React app will render inside this element -->
-<div id="react-mount"></div>
-
-<!-- Fallback / instructions (visible until React mounts) -->
-<div style="margin-top:12px;font-size:13px;color:var(--muted);">
-Please replace YOURGOOGLESHEETCSVURLHERE inside the code with your actual published Google Sheets CSV link.
-</div>
+  <div id="react-mount"></div>
+  <div style="margin-top:12px;font-size:13px;color:var(--muted);">
+    Please replace YOURGOOGLESHEETCSVURLHERE inside the code with your actual published Google Sheets CSV link.
+  </div>
 </div>
 </div>
 
-<!-- React/ReactDOM from CDN (kept from original) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 
 <script>
 (function(){
-const { useState, useEffect, useMemo } = React;
+  const { useState, useEffect, useMemo } = React;
+  const SHEETCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5xfObQPSQ7NBH__MuzeVy4PF7jUaga0Dqvf7Knj7DvpM1NtVu4jIf68HbGB3YYd8V_rTyaFL7GMIS/pub?output=csv";
 
-// Paste your published Google Sheet CSV URL here (replace the placeholder)
-const SHEETCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5xfObQPSQ7NBH__MuzeVy4PF7jUaga0Dqvf7Knj7DvpM1NtVu4jIf68HbGB3YYd8V_rTyaFL7GMIS/pub?output=csv"; // <-- set this to your published CSV
+  function parseCSVtext(text){
+    if(!text) return [];
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if(lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+    return lines.slice(1).map(line => {
+      const values = (line.match(/(?:\".*?\"|[^,])+/g) || line.split(',')).map(v => v.trim().replace(/^"|"$/g,''));
+      const row = {};
+      headers.forEach((h,i) => row[h] = values[i] ?? '');
+      return {
+        seed: row.seed || '',
+        region: row.region || '',
+        major1: {
+          wins: parseInt(row.m1wins || 0, 10),
+          losses: parseInt(row.m1losses || 0, 10),
+          gd: parseInt(row.m1gd || 0, 10),
+          teams: row.m1teams ? row.m1teams.split(';').map(t => t.trim()) : []
+        },
+        major2: {
+          wins: parseInt(row.m2wins || 0, 10),
+          losses: parseInt(row.m2losses || 0, 10),
+          gd: parseInt(row.m2gd || 0, 10),
+          teams: row.m2teams ? row.m2teams.split(';').map(t => t.trim()) : []
+        }
+      };
+    });
+  }
 
-/* --- helper: parse CSV (kept from original file's approach) --- */
-function parseCSVtext(text){
-if(!text) return [];
-const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-if(lines.length < 2) return [];
-const headers = lines.split(',').map(h=>h.trim().replace(/^"|"$/g,''));
-return lines.slice(1).map(line=>{
-// basic split that tolerates quoted commas
-const values = (line.match(/(?:\".*?\"|[^,])+/g) || line.split(',')).map(v=>v.trim().replace(/^"|"$/g,''));
-const row = {};
-headers.forEach((h,i)=> row[h] = values[i] ?? '');
-// adapt to existing expected fields - keep consistent with original app
-return {
-seed: row.seed || '',
-region: row.region || '',
-major1: {
-wins: parseInt(row.m1wins||0,10),
-losses: parseInt(row.m1losses||0,10),
-gd: parseInt(row.m1gd||0,10),
-teams: row.m1teams ? row.m1teams.split(';').map(t => t.trim()) : ]
-},
-major2: {
-wins: parseInt(row.m2wins||0,10),
-losses: parseInt(row.m2losses||0,10),
-gd: parseInt(row.m2gd||0,10),
-teams: row.m2teams ? row.m2teams.split(';').map(t => t.trim()) : ]
-}
-};
-});
-}
+  function h(tag, props, ...children){
+    return React.createElement(tag, props, ...children);
+  }
 
-/* --- small presentational components (JSX-like using createElement) --- */
-function h(tag, props, ...children){
-return React.createElement(tag, props, ...children);
-}
+  function App(){
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [view, setView] = useState('combined');
+    const [regionFilter, setRegionFilter] = useState('All');
 
-function App(){
-const [data, setData] = useState([]);
-const [loading, setLoading] = useState(true);
-const [view, setView] = useState('combined'); // 'major1', 'major2', 'combined'
-const [regionFilter, setRegionFilter] = useState('All');
+    useEffect(() => {
+      if(!SHEETCSVURL || SHEETCSVURL.includes('YOURGOOGLESHEETCSVURLHERE')){
+        setLoading(false);
+        console.warn('Please set SHEETCSVURL to your published Google Sheet CSV URL.');
+        return;
+      }
+      setLoading(true);
+      fetch(SHEETCSVURL)
+        .then(res => res.text())
+        .then(text => {
+          const parsed = parseCSVtext(text);
+          const proc = parsed.map(r => {
+            const combinedWins = (r.major1.wins || 0) + (r.major2.wins || 0);
+            const combinedLosses = (r.major1.losses || 0) + (r.major2.losses || 0);
+            const combinedGD = (r.major1.gd || 0) + (r.major2.gd || 0);
+            return {
+              seed: r.seed,
+              region: r.region,
+              major1: {...r.major1},
+              major2: {...r.major2},
+              combined: { wins: combinedWins, losses: combinedLosses, gd: combinedGD }
+            };
+          });
+          setData(proc);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error loading CSV', err);
+          setLoading(false);
+        });
+    }, []);
 
-useEffect(()=>{
-if(!SHEETCSVURL || SHEETCSVURL.includes('YOURGOOGLESHEETCSVURLHERE')){
-setLoading(false);
-console.warn('Please set SHEETCSVURL to your published Google Sheet CSV URL.');
-return;
-}
-setLoading(true);
-fetch(SHEETCSVURL)
-.then(res => res.text())
-.then(text => {
-const parsed = parseCSVtext(text);
-// keep a simple normalized structure used by the app UI
-const proc = parsed.map(r => {
-const combinedWins = (r.major1.wins || 0) + (r.major2.wins || 0);
-const combinedLosses = (r.major1.losses || 0) + (r.major2.losses || 0);
-const combinedGD = (r.major1.gd || 0) + (r.major2.gd || 0);
-return {
-seed: r.seed,
-region: r.region,
-major1: {...r.major1},
-major2: {...r.major2},
-combined: { wins: combinedWins, losses: combinedLosses, gd: combinedGD }
-};
-});
-setData(proc);
-setLoading(false);
-})
-.catch(err => {
-console.error('Error loading CSV', err);
-setLoading(false);
-});
-}, []);
+    const regions = useMemo(() => {
+      const set = new Set(data.map(d => d.region).filter(Boolean));
+      return ['All', ...Array.from(set)];
+    }, [data]);
 
-const regions = useMemo(()=>{
-const set = new Set(data.map(d=>d.region).filter(Boolean));
-return ['All', ...Array.from(set)];
-}, [data]);
+    const shown = useMemo(() => {
+      return data.filter(d => regionFilter === 'All' ? true : d.region === regionFilter);
+    }, [data, regionFilter]);
 
-const shown = useMemo(()=>{
-return data.filter(d => regionFilter === 'All' ? true : d.region === regionFilter);
-}, [data, regionFilter]);
+    return h('div', null,
+      h('div', { className:'controls' },
+        h('div', null,
+          h('button', { className:`btn ${view==='major1' ? 'active' : ''}`, onClick:() => setView('major1') }, 'Major 1'),
+          h('button', { className:`btn ${view==='major2' ? 'active' : ''}`, onClick:() => setView('major2'), style:{ marginLeft:6 } }, 'Major 2'),
+          h('button', { className:`btn ${view==='combined' ? 'active' : ''}`, onClick:() => setView('combined'), style:{ marginLeft:6 } }, 'Combined')
+        ),
+        h('div', { style:{ marginLeft:'auto', display:'flex', gap:8 } },
+          regions.map(r => h('button', { key:r, className:`btn ${regionFilter===r ? 'active' : ''}`, onClick:() => setRegionFilter(r) }, r))
+        )
+      ),
+      loading
+        ? h('div', { style:{ padding:20, color:'var(--muted)' } }, 'Loading leaderboard data from Google Sheets...')
+        : h('table', null,
+            h('colgroup', null,
+              h('col', { style:{ width:'34px' } }),
+              h('col', { style:{ width:'198px' } }),
+              h('col', { style:{ width:'62px' } }),
+              h('col', { style:{ width:'72px' } }),
+              h('col', { style:{ width:'72px' } }),
+              h('col', { style:{ width:'88px' } }),
+              h('col', { style:{ width:'66px' } }),
+              h('col', { style:{ width:'52px' } }),
+              h('col', { style:{ width:'34px' } })
+            ),
+            h('thead', null,
+              h('tr', null,
+                h('th', null, '#'),
+                h('th', null, 'Seed / Teams'),
+                h('th', null, 'Region'),
+                h('th', { style:{ textAlign:'right' } }, 'M1 W'),
+                h('th', { style:{ textAlign:'right' } }, 'M2 W'),
+                h('th', { style:{ textAlign:'right' } }, 'Combined'),
+                h('th', { style:{ textAlign:'center' } }, 'W / L'),
+                h('th', { style:{ textAlign:'center' } }, 'GD'),
+                h('th', null, '')
+              )
+            ),
+            h('tbody', null,
+              shown.map((row, idx) => {
+                const w = row.combined.wins || 0;
+                const l = row.combined.losses || 0;
+                const gd = row.combined.gd || 0;
+                return h(React.Fragment, { key: row.seed || idx },
+                  h('tr', { style:{ cursor:'pointer' } },
+                    h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', color:'var(--muted-2)' } }, idx + 1),
+                    h('td', null,
+                      h('div', { style:{ display:'flex', flexDirection:'column', gap:6 } },
+                        h('span', { className:'seed-pill', style:{ background:'transparent', color:'#dfe7f5', borderLeft:`3px solid ${getRegionColor(row.region)}` } }, row.seed || '—'),
+                        h('div', { className:'small-muted' },
+                          ((row.major1.teams && row.major1.teams.length) || (row.major2.teams && row.major2.teams.length))
+                            ? ( (row.major1.teams || []).concat(row.major2.teams || []).join(', ') )
+                            : 'None'
+                        )
+                      )
+                    ),
+                    h('td', null, h('div', { className:'region' }, row.region || '—')),
+                    h('td', { className:'wcell' }, row.major1.wins || 0),
+                    h('td', { className:'wcell' }, row.major2.wins || 0),
+                    h('td', { className:'wcell' }, row.combined.wins || 0),
+                    h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', fontWeight:700, color:'var(--text)' } },
+                      h('span', { style:{ color:'#7ee87e' } }, w),
+                      h('span', { style:{ color:'var(--muted)', margin:'0 6px' } }, '/'),
+                      h('span', { style:{ color:'#ff7272' } }, l)
+                    ),
+                    h('td', { className:'gd' }, gd),
+                    h('td', { className:'expand-toggle' }, '›')
+                  )
+                );
+              })
+            )
+          )
+    );
+  }
 
-// minimal table markup - keeps the same columns as your original
-return h('div', null,
-h('div', { className: 'controls' },
-h('div', null,
-h('button', { className: btn ${view==='major1' ? 'active':''}, onClick: ()=>setView('major1') }, 'Major 1'),
-h('button', { className: btn ${view==='major2' ? 'active':''}, onClick: ()=>setView('major2') , style:{marginLeft:6} }, 'Major 2'),
-h('button', { className: btn ${view==='combined' ? 'active':''}, onClick: ()=>setView('combined'), style:{marginLeft:6} }, 'Combined')
-),
-h('div', { style: { marginLeft: 'auto', display:'flex', gap:8 } },
-regions.map(r => h('button', { key:r, className: btn ${regionFilter===r ? 'active':''}, onClick: ()=>setRegionFilter(r) }, r))
-)
-),
+  function getRegionColor(region){
+    const map = {
+      'Europe':'#95a8ff',
+      'North America':'#ff7c52',
+      'MENA':'#f5c842',
+      'South America':'#6ee89a',
+      'Asia-Pacific':'#b09cf0',
+      'Oceania':'#f08ab8',
+      'Sub-Saharan Africa':'#5ecfb8'
+    };
+    return map[region] || '#9aa3b8';
+  }
 
-loading ? h('div', { style:{padding:20, color: 'var(--muted)'} }, 'Loading leaderboard data from Google Sheets...') :
-
-h('table', null,
-h('colgroup', null,
-h('col', { style: { width: '34px' }}),
-h('col', { style: { width: '198px' }}),
-h('col', { style: { width: '62px' }}),
-h('col', { style: { width: '72px' }}),
-h('col', { style: { width: '72px' }}),
-h('col', { style: { width: '88px' }}),
-h('col', { style: { width: '66px' }}),
-h('col', { style: { width: '52px' }}),
-h('col', { style: { width: '34px' }})
-),
-h('thead', null,
-h('tr', null,
-h('th', null, '#'),
-h('th', null, 'Seed / Teams'),
-h('th', null, 'Region'),
-h('th', { style: { textAlign:'right' } }, 'M1 W'),
-h('th', { style: { textAlign:'right' } }, 'M2 W'),
-h('th', { style: { textAlign:'right' } }, 'Combined'),
-h('th', { style: { textAlign:'center' } }, 'W / L'),
-h('th', { style: { textAlign:'center' } }, 'GD'),
-h('th', null, '')
-)
-),
-h('tbody', null,
-shown.map((row, idx) => {
-const m1p = row.major1.wins != null ? row.major1.wins : 0;
-const m2p = row.major2.wins != null ? row.major2.wins : 0;
-const cp = row.combined.wins != null ? row.combined.wins : 0;
-const w = row.combined.wins || 0;
-const l = row.combined.losses || 0;
-const gd = row.combined.gd || 0;
-return h(React.Fragment, { key: row.seed || idx },
-h('tr', { style: { cursor: 'pointer' } },
-h('td', { style: { textAlign:'center', fontFamily:'var(--mono)', color:'var(--muted-2)' } }, idx + 1),
-h('td', null,
-h('div', { style: { display:'flex', flexDirection:'column', gap:6 } },
-h('span', { className:'seed-pill', style: { background: 'transparent', color: '#dfe7f5', borderLeft: 3px solid ${getRegionColor(row.region)} } }, row.seed || '—'),
-h('div', { className:'small-muted' }, (row.major1.teams && row.major1.teams.length) || (row.major2.teams && row.major2.teams.length) ? ( (row.major1.teams||[]).concat(row.major2.teams||[]).join(', ') ) : 'None')
-)
-),
-h('td', null, h('div', { className:'region' }, row.region || '—')),
-h('td', { className:'wcell' }, m1p),
-h('td', { className:'wcell' }, m2p),
-h('td', { className:'wcell' }, cp),
-h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', fontWeight:700, color: 'var(--text)' } }, h('span', { style:{ color:'#7ee87e' } }, w), h('span', { style:{ color: 'var(--muted)', margin: '0 6px' } }, '/'), h('span', { style:{ color:'#ff7272' } }, l)),
-h('td', { className:'gd' }, gd),
-h('td', { className:'expand-toggle' }, '›')
-)
-);
-})
-)
-)
-);
-}
-
-// small helper to keep region colors perceptible (keeps spirit of original mapping)
-function getRegionColor(region){
-const map = {
-'Europe':'#95a8ff',
-'North America':'#ff7c52',
-'MENA':'#f5c842',
-'South America':'#6ee89a',
-'Asia-Pacific':'#b09cf0',
-'Oceania':'#f08ab8',
-'Sub-Saharan Africa':'#5ecfb8'
-};
-return map[region] || '#9aa3b8';
-}
-
-// mount React app
-const mount = document.getElementById('react-mount');
-ReactDOM.createRoot(mount).render(React.createElement(App));
+  const mount = document.getElementById('react-mount');
+  ReactDOM.createRoot(mount).render(React.createElement(App));
 })();
 </script>
 </body>
