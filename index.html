@@ -172,7 +172,7 @@ tbody td{
   // ─── DATA SOURCE ─────────────────────────────────────────────────────────────
   // Set mode to 'live' and the app will fetch from your CSV URL instead of fake data.
   const CONFIG = {
-    mode: 'live',  // 'fake' | 'live'
+    mode: 'fake',  // 'fake' | 'live'
     url:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5xfObQPSQ7NBH__MuzeVy4PF7jUaga0Dqvf7Knj7DvpM1NtVu4jIf68HbGB3YYd8V_rTyaFL7GMIS/pub?output=csv'
   };
   // ─────────────────────────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ SSA,0,9,-9,5F,0,0,0,5F`;
                 const displayTeam = view === 'major2' ? row.major2.team : row.major1.team;
                 const subLabel    = view === 'combined'
                   ? [row.major1.team, row.major2.team].filter(Boolean).join(' · ')
-                  : view === 'major1' ? row.major2.team : row.major1.team;
+                  : view === 'major1' ? row.major1.team : row.major2.team;
                 return h(React.Fragment, { key: `${row.region}-${row.major1.team}-${idx}` },
                   h('tr', { style:{ cursor:'pointer' } },
                     h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', color:'var(--muted-2)' } }, idx + 1),
