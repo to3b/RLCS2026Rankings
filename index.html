@@ -153,16 +153,12 @@ tbody td{
 <div class="header">
   <div>
     <h1 class="title">Seed Tracker</h1>
-    <div class="subtitle">Live leaderboard — connect your published Google Sheet CSV</div>
+    <div class="subtitle">Live leaderboard</div>
   </div>
-  <div class="small-muted">Connected to Google Sheets — set your CSV URL below</div>
 </div>
 
 <div class="card" id="app-root">
   <div id="react-mount"></div>
-  <div style="margin-top:12px;font-size:13px;color:var(--muted);">
-    Please replace YOURGOOGLESHEETCSVURLHERE inside the code with your actual published Google Sheets CSV link.
-  </div>
 </div>
 </div>
 
@@ -172,7 +168,32 @@ tbody td{
 <script>
 (function(){
   const { useState, useEffect, useMemo } = React;
-  const SHEETCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5xfObQPSQ7NBH__MuzeVy4PF7jUaga0Dqvf7Knj7DvpM1NtVu4jIf68HbGB3YYd8V_rTyaFL7GMIS/pub?output=csv";
+
+  // ─── DATA SOURCE ─────────────────────────────────────────────────────────────
+  // Set mode to 'live' and the app will fetch from your CSV URL instead of fake data.
+  const CONFIG = {
+    mode: 'live',  // 'fake' | 'live'
+    url:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5xfObQPSQ7NBH__MuzeVy4PF7jUaga0Dqvf7Knj7DvpM1NtVu4jIf68HbGB3YYd8V_rTyaFL7GMIS/pub?output=csv'
+  };
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  const FAKE_CSV = `region,m1wins,m1losses,m1gd,m1teams,m2wins,m2losses,m2gd,m2teams
+EU,21,11,10,M8,0,0,0,VIT
+EU,14,14,0,KC,0,0,0,M8
+EU,19,9,10,VIT,0,0,0,NIP
+EU,9,9,0,NIP,0,0,0,KC
+EU,10,10,0,GK,0,0,0,MCI
+NA,17,12,5,NRG,0,0,0,NRG
+NA,11,11,0,SR,0,0,0,SSG
+NA,6,8,-2,VP,0,0,0,SR
+NA,3,9,-6,SSG,0,0,0,FUT
+OCE,6,6,0,PWR,0,0,0,WC
+SAM,6,8,-2,FUR,0,0,0,MIBR
+SAM,7,7,0,MIBR,0,0,0,FUR
+MENA,17,13,4,FLCN,0,0,0,TWIS
+MENA,5,7,-2,TWIS,0,0,0,R8
+APAC,1,9,-8,TSM,0,0,0,TSM
+SSA,0,9,-9,5F,0,0,0,5F`;
 
   function parseCSVtext(text){
     if(!text) return [];
@@ -180,24 +201,40 @@ tbody td{
     if(lines.length < 2) return [];
     const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
     return lines.slice(1).map(line => {
-      const values = (line.match(/(?:\".*?\"|[^,])+/g) || line.split(',')).map(v => v.trim().replace(/^"|"$/g,''));
+      const values = (line.match(/(?:".*?"|[^,])+/g) || line.split(',')).map(v => v.trim().replace(/^"|"$/g,''));
       const row = {};
       headers.forEach((h,i) => row[h] = values[i] ?? '');
       return {
-        seed: row.seed || '',
         region: row.region || '',
         major1: {
-          wins: parseInt(row.m1wins || 0, 10),
+          wins:   parseInt(row.m1wins   || 0, 10),
           losses: parseInt(row.m1losses || 0, 10),
-          gd: parseInt(row.m1gd || 0, 10),
-          teams: row.m1teams ? row.m1teams.split(';').map(t => t.trim()) : []
+          gd:     parseInt(row.m1gd     || 0, 10),
+          team:   row.m1teams || ''
         },
         major2: {
-          wins: parseInt(row.m2wins || 0, 10),
+          wins:   parseInt(row.m2wins   || 0, 10),
           losses: parseInt(row.m2losses || 0, 10),
-          gd: parseInt(row.m2gd || 0, 10),
-          teams: row.m2teams ? row.m2teams.split(';').map(t => t.trim()) : []
+          gd:     parseInt(row.m2gd     || 0, 10),
+          team:   row.m2teams || ''
         }
+      };
+    });
+  }
+
+  function processRows(parsed){
+    const regionCount = {};
+    return parsed.map(r => {
+      const key = (r.region || '').toUpperCase();
+      regionCount[key] = (regionCount[key] || 0) + 1;
+      const seedName = `${key}${regionCount[key]}`;
+      const combinedWins   = r.major1.wins   + r.major2.wins;
+      const combinedLosses = r.major1.losses + r.major2.losses;
+      const combinedGD     = r.major1.gd     + r.major2.gd;
+      return {
+        ...r,
+        seedName,
+        combined: { wins: combinedWins, losses: combinedLosses, gd: combinedGD }
       };
     });
   }
@@ -213,35 +250,16 @@ tbody td{
     const [regionFilter, setRegionFilter] = useState('All');
 
     useEffect(() => {
-      if(!SHEETCSVURL || SHEETCSVURL.includes('YOURGOOGLESHEETCSVURLHERE')){
+      if(CONFIG.mode === 'live'){
+        setLoading(true);
+        fetch(CONFIG.url)
+          .then(res => res.text())
+          .then(text => { setData(processRows(parseCSVtext(text))); setLoading(false); })
+          .catch(err => { console.error('Failed to load CSV', err); setLoading(false); });
+      } else {
+        setData(processRows(parseCSVtext(FAKE_CSV)));
         setLoading(false);
-        console.warn('Please set SHEETCSVURL to your published Google Sheet CSV URL.');
-        return;
       }
-      setLoading(true);
-      fetch(SHEETCSVURL)
-        .then(res => res.text())
-        .then(text => {
-          const parsed = parseCSVtext(text);
-          const proc = parsed.map(r => {
-            const combinedWins = (r.major1.wins || 0) + (r.major2.wins || 0);
-            const combinedLosses = (r.major1.losses || 0) + (r.major2.losses || 0);
-            const combinedGD = (r.major1.gd || 0) + (r.major2.gd || 0);
-            return {
-              seed: r.seed,
-              region: r.region,
-              major1: {...r.major1},
-              major2: {...r.major2},
-              combined: { wins: combinedWins, losses: combinedLosses, gd: combinedGD }
-            };
-          });
-          setData(proc);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error loading CSV', err);
-          setLoading(false);
-        });
     }, []);
 
     const regions = useMemo(() => {
@@ -250,8 +268,19 @@ tbody td{
     }, [data]);
 
     const shown = useMemo(() => {
-      return data.filter(d => regionFilter === 'All' ? true : d.region === regionFilter);
-    }, [data, regionFilter]);
+      const src = view === 'major1' ? 'major1' : view === 'major2' ? 'major2' : 'combined';
+      return data
+        .filter(d => regionFilter === 'All' ? true : d.region === regionFilter)
+        .slice()
+        .sort((a, b) => {
+          const wDiff = (b[src].wins || 0) - (a[src].wins || 0);
+          if(wDiff !== 0) return wDiff;
+          return (b[src].gd || 0) - (a[src].gd || 0);
+        });
+    }, [data, regionFilter, view]);
+
+    const src = view === 'major1' ? 'major1' : view === 'major2' ? 'major2' : 'combined';
+    const isCombined = view === 'combined';
 
     return h('div', null,
       h('div', { className:'controls' },
@@ -265,14 +294,14 @@ tbody td{
         )
       ),
       loading
-        ? h('div', { style:{ padding:20, color:'var(--muted)' } }, 'Loading leaderboard data from Google Sheets...')
+        ? h('div', { style:{ padding:20, color:'var(--muted)' } }, 'Loading leaderboard data...')
         : h('table', null,
             h('colgroup', null,
               h('col', { style:{ width:'34px' } }),
               h('col', { style:{ width:'198px' } }),
               h('col', { style:{ width:'62px' } }),
-              h('col', { style:{ width:'72px' } }),
-              h('col', { style:{ width:'72px' } }),
+              isCombined ? h('col', { style:{ width:'72px' } }) : null,
+              isCombined ? h('col', { style:{ width:'72px' } }) : null,
               h('col', { style:{ width:'88px' } }),
               h('col', { style:{ width:'66px' } }),
               h('col', { style:{ width:'52px' } }),
@@ -283,9 +312,9 @@ tbody td{
                 h('th', null, '#'),
                 h('th', null, 'Seed / Teams'),
                 h('th', null, 'Region'),
-                h('th', { style:{ textAlign:'right' } }, 'M1 W'),
-                h('th', { style:{ textAlign:'right' } }, 'M2 W'),
-                h('th', { style:{ textAlign:'right' } }, 'Combined'),
+                isCombined ? h('th', { style:{ textAlign:'right' } }, 'M1 W') : null,
+                isCombined ? h('th', { style:{ textAlign:'right' } }, 'M2 W') : null,
+                h('th', { style:{ textAlign:'right' } }, isCombined ? 'Combined' : view === 'major1' ? 'M1 Wins' : 'M2 Wins'),
                 h('th', { style:{ textAlign:'center' } }, 'W / L'),
                 h('th', { style:{ textAlign:'center' } }, 'GD'),
                 h('th', null, '')
@@ -293,32 +322,32 @@ tbody td{
             ),
             h('tbody', null,
               shown.map((row, idx) => {
-                const w = row.combined.wins || 0;
-                const l = row.combined.losses || 0;
-                const gd = row.combined.gd || 0;
-                return h(React.Fragment, { key: row.seed || idx },
+                const w = row[src].wins || 0;
+                const l = row[src].losses || 0;
+                const gd = row[src].gd || 0;
+                const displayTeam = view === 'major2' ? row.major2.team : row.major1.team;
+                const subLabel    = view === 'combined'
+                  ? [row.major1.team, row.major2.team].filter(Boolean).join(' · ')
+                  : view === 'major1' ? row.major2.team : row.major1.team;
+                return h(React.Fragment, { key: `${row.region}-${row.major1.team}-${idx}` },
                   h('tr', { style:{ cursor:'pointer' } },
                     h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', color:'var(--muted-2)' } }, idx + 1),
                     h('td', null,
-                      h('div', { style:{ display:'flex', flexDirection:'column', gap:6 } },
-                        h('span', { className:'seed-pill', style:{ background:'transparent', color:'#dfe7f5', borderLeft:`3px solid ${getRegionColor(row.region)}` } }, row.seed || '—'),
-                        h('div', { className:'small-muted' },
-                          ((row.major1.teams && row.major1.teams.length) || (row.major2.teams && row.major2.teams.length))
-                            ? ( (row.major1.teams || []).concat(row.major2.teams || []).join(', ') )
-                            : 'None'
-                        )
+                      h('div', { style:{ display:'flex', flexDirection:'column', gap:4 } },
+                        h('span', { className:'seed-pill', style:{ background:'transparent', color:'#dfe7f5', borderLeft:`3px solid ${getRegionColor(row.region)}` } }, row.seedName),
+                        subLabel ? h('div', { className:'small-muted' }, subLabel) : null
                       )
                     ),
                     h('td', null, h('div', { className:'region' }, row.region || '—')),
-                    h('td', { className:'wcell' }, row.major1.wins || 0),
-                    h('td', { className:'wcell' }, row.major2.wins || 0),
-                    h('td', { className:'wcell' }, row.combined.wins || 0),
+                    isCombined ? h('td', { className:'wcell' }, row.major1.wins || 0) : null,
+                    isCombined ? h('td', { className:'wcell' }, row.major2.wins || 0) : null,
+                    h('td', { className:'wcell' }, w),
                     h('td', { style:{ textAlign:'center', fontFamily:'var(--mono)', fontWeight:700, color:'var(--text)' } },
                       h('span', { style:{ color:'#7ee87e' } }, w),
                       h('span', { style:{ color:'var(--muted)', margin:'0 6px' } }, '/'),
                       h('span', { style:{ color:'#ff7272' } }, l)
                     ),
-                    h('td', { className:'gd' }, gd),
+                    h('td', { className:'gd' }, gd > 0 ? `+${gd}` : gd),
                     h('td', { className:'expand-toggle' }, '›')
                   )
                 );
@@ -330,15 +359,15 @@ tbody td{
 
   function getRegionColor(region){
     const map = {
-      'Europe':'#95a8ff',
-      'North America':'#ff7c52',
-      'MENA':'#f5c842',
-      'South America':'#6ee89a',
-      'Asia-Pacific':'#b09cf0',
-      'Oceania':'#f08ab8',
-      'Sub-Saharan Africa':'#5ecfb8'
+      'eu':   '#95a8ff',
+      'na':   '#ff7c52',
+      'mena': '#f5c842',
+      'sam':  '#6ee89a',
+      'apac': '#b09cf0',
+      'oce':  '#f08ab8',
+      'ssa':  '#5ecfb8'
     };
-    return map[region] || '#9aa3b8';
+    return map[(region || '').trim().toLowerCase()] || '#9aa3b8';
   }
 
   const mount = document.getElementById('react-mount');
